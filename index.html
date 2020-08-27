@@ -1,10 +1,72 @@
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>boy lets see if this works</title>
-</head>
-<body>
-    <h1>Chris is dumb and ugly</h1>
-</body>
-</html>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <link rel="stylesheet" href="styles.css">
+        <title>Can i Idle This?</title>
+        </head>
+    <body>
+        
+        <div class="container my-5 mx-auto">
+            <h1 class="text-white text-center my-4">wowee lets see how this looks</h1>
+
+            <div class="row">
+                <form class="col text-white text-center my-4" onsubmit="return false">
+                    <label for="TotalHealth">Total Health</label>
+                    <input type="number" name="TotalHealth" class="form-control p-3" min="0" max="1030" value="100">
+                </form>
+                <form class="col text-white text-center my-4" onsubmit="return false">
+                    <label for="currDR">Current DR%</label>
+                    <input type="number" name="TotalHealth" class="form-control p-3" min="0" max="85" value="0">
+                </form>
+                <div class="col dropdown text-white text-center my-4">
+                    <label for="autoEatLevel">AutoEat Level</label>
+                    <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      set me
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href="#">0</a>
+                      <a class="dropdown-item" href="#">1</a>
+                      <a class="dropdown-item" href="#">2</a>
+                      <a class="dropdown-item" href="#">3</a>
+                    </div>
+                  </div>
+                  <div class="col dropdown text-white text-center my-4">
+                    <label for="combatStyle">Combat Style</label>
+                    <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      set me
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href="#">Melee</a>
+                      <a class="dropdown-item" href="#">Ranged</a>
+                      <a class="dropdown-item" href="#">Magic</a>
+                    </div>
+                  </div>
+                  <div class="col dropdown text-white text-center my-4">
+                    <label for="gameMode">Game Mode</label>
+                    <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      set me
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href="#">Normal</a>
+                      <a class="dropdown-item" href="#">Hardcore</a>
+
+                    </div>
+                  </div>
+            </div>  
+
+        </div>
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <script src="app.js"></script>
+    </body>
+</html> 
