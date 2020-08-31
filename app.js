@@ -1,19 +1,15 @@
 const dropdowns = document.querySelectorAll('.dropdown');
-const dropdownMenus = document.querySelectorAll('.dropdown-menu');
 const inputs = document.querySelectorAll('.input-field');
 for (let i = 0; i < dropdowns.length; i++) {
     dropdowns[i].addEventListener('click', e => {
         if (e.target.classList.contains('dropdown-item')) {
             dropdowns[i].querySelector('button').innerText = e.target.innerText;
+            doTheThing();
         }
     });
 }
 for (let i = 0; i < inputs.length; i++) {
     inputs[i].addEventListener('keyup', doTheThing);
-}
-;
-for (let i = 0; i < dropdownMenus.length; i++) {
-    dropdownMenus[i].addEventListener('click', doTheThing);
 }
 ;
 function calcMinDR(autoEatThreshold, combatTriangle, combatStyle) {
@@ -100,6 +96,7 @@ TODO
 make shit go colourfull if you have enough DR equipt
 Improve style
 stop shit moving about, fix width of columns
+If multiple monsters have 0 DR, show the one with the highest reduced max hit
 Save previous settings
 make code less shit
 tabs with other calcs?
