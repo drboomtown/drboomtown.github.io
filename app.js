@@ -9,7 +9,7 @@ for (let i = 0; i < dropdowns.length; i++) {
     });
 }
 for (let i = 0; i < inputs.length; i++) {
-    inputs[i].addEventListener('keyup', doTheThing);
+    inputs[i].addEventListener('input', doTheThing);
 }
 ;
 function calcMinDR(autoEatThreshold, combatTriangle, combatStyle) {
@@ -37,7 +37,14 @@ function updateTable() {
     let currDR = document.getElementById('currDR').value;
     DUNGEONS.forEach(dungeon => {
         let highestDR = Math.max(...dungeon.monsters.map(monster => monster.minDR));
-        let toughestFoe = dungeon.monsters.find(monster => monster.minDR === highestDR);
+        let toughestFoe;
+        if (highestDR === 0) {
+            let highestHit = Math.max(...dungeon.monsters.map(monster => monster.reducedMaxHit));
+            toughestFoe = dungeon.monsters.find(monster => monster.reducedMaxHit === highestHit);
+        }
+        else {
+            toughestFoe = dungeon.monsters.find(monster => monster.minDR === highestDR);
+        }
         toughestFoeList.push(toughestFoe);
     });
     toughestFoeList.forEach((monster, i) => {
@@ -47,9 +54,9 @@ function updateTable() {
         tablerow[3].textContent = combatStyleSelect[monster.attackType];
         tablerow[4].textContent = monster.maxHit;
         tablerow[5].textContent = monster.reducedMaxHit;
+        // i want to change this so apply to entire row, not just each individual cell
         if (monster.minDR <= currDR) {
             tablerow.forEach(element => element.classList.add("idleable"));
-
         }
         else if (monster.minDR > currDR && tablerow[0].classList.contains("idleable")) {
             tablerow.forEach(element => element.classList.remove("idleable"));
@@ -101,12 +108,12 @@ function doTheThing() {
 }
 /*
 TODO
-make shit go colourfull if you have enough DR equipt
-input arrows not submit form,
+X make shit go colourfull if you have enough DR equipt
+X input arrows not submit form,
 Improve style
-letter spacing, center collumn text
-colour striping with green overlay
-stop shit moving about, fix width of columns
+X letter spacing, center collumn text (do i want this?)
+X colour striping with green overlay (working but i want to do it better)
+X stop shit moving about, fix width of columns
 If multiple monsters have 0 DR, show the one with the highest reduced max hit
 Save previous settings
 make code less shit
