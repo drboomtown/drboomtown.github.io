@@ -48,11 +48,11 @@ function updateTable() {
         tablerow[4].textContent = monster.maxHit;
         tablerow[5].textContent = monster.reducedMaxHit;
         if (monster.minDR <= currDR) {
-            //table[i] to colour entire row, need to work out how to keep striping
-            tablerow[1].classList.add("idleable");
+            tablerow.forEach(element => element.classList.add("idleable"));
+
         }
-        else if (monster.minDR > currDR && tablerow[1].classList.contains("idleable")) {
-            tablerow[1].classList.remove("idleable");
+        else if (monster.minDR > currDR && tablerow[0].classList.contains("idleable")) {
+            tablerow.forEach(element => element.classList.remove("idleable"));
         }
     });
     // 
