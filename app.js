@@ -34,6 +34,7 @@ function updateTable() {
     const table = document.querySelectorAll('tbody tr');
     let toughestFoeList = [];
     let combatStyleSelect = ["Melee", "Ranged", "Magic"];
+    let currDR = document.getElementById('currDR').value;
     DUNGEONS.forEach(dungeon => {
         let highestDR = Math.max(...dungeon.monsters.map(monster => monster.minDR));
         let toughestFoe = dungeon.monsters.find(monster => monster.minDR === highestDR);
@@ -46,6 +47,13 @@ function updateTable() {
         tablerow[3].textContent = combatStyleSelect[monster.attackType];
         tablerow[4].textContent = monster.maxHit;
         tablerow[5].textContent = monster.reducedMaxHit;
+        if (monster.minDR <= currDR) {
+            //table[i] to colour entire row, need to work out how to keep striping
+            tablerow[1].classList.add("idleable");
+        }
+        else if (monster.minDR > currDR && tablerow[1].classList.contains("idleable")) {
+            tablerow[1].classList.remove("idleable");
+        }
     });
     // 
     // tablerow[0].textContent = '99';
@@ -94,7 +102,10 @@ function doTheThing() {
 /*
 TODO
 make shit go colourfull if you have enough DR equipt
+input arrows not submit form,
 Improve style
+letter spacing, center collumn text
+colour striping with green overlay
 stop shit moving about, fix width of columns
 If multiple monsters have 0 DR, show the one with the highest reduced max hit
 Save previous settings

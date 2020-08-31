@@ -1,5 +1,8 @@
 body{
     background: #2A1B44;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.05em;
     font-size: 0.8em;
+}
+.idleable{
+    background-color: #28a7452e!important;
 }
