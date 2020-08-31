@@ -8,28 +8,28 @@
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
         <link rel="stylesheet" href="styles.css">
-        <title>Can i Idle This?</title>
+        <title>Can I Idle This?</title>
         </head>
     <body>
         
         <div class="container my-5 mx-auto">
-            <h1 class="text-white text-center my-4">wowee lets see how this looks</h1>
+            <h1 class="text-white text-center my-4">Can I Idle This?</h1>
 
             <div class="row">
-                <form class="col text-white text-center my-4" onsubmit="return false">
+                <form class="input-field col text-white text-center my-4" onsubmit="return false">
                     <label for="TotalHealth">Total Health</label>
-                    <input type="number" name="TotalHealth" class="form-control p-3" min="0" max="1030" value="100">
+                    <input id="currHealth" type="number" name="TotalHealth" class="health-input form-control p-3" min="0" max="1030" value="100" step="10">
                 </form>
-                <form class="col text-white text-center my-4" onsubmit="return false">
-                    <label for="currDR">Current DR%</label>
-                    <input type="number" name="TotalHealth" class="form-control p-3" min="0" max="85" value="0">
+                <form class="input-field col text-white text-center my-4" onsubmit="return false">
+                    <label for="TotalDR">Current DR%</label>
+                    <input id="currDR" type="number" name="TotalDR" class=" form-control p-3" min="0" max="85" value="0">
                 </form>
                 <div class="col dropdown text-white text-center my-4">
                     <label for="autoEatLevel">AutoEat Level</label>
-                    <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      set me
+                    <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="autoEatDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      1
                     </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <div class="dropdown-menu" aria-labelledby="autoEatDropDown">
                       <a class="dropdown-item" href="#">0</a>
                       <a class="dropdown-item" href="#">1</a>
                       <a class="dropdown-item" href="#">2</a>
@@ -38,10 +38,10 @@
                   </div>
                   <div class="col dropdown text-white text-center my-4">
                     <label for="combatStyle">Combat Style</label>
-                    <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      set me
+                    <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="combatStyleDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Melee
                     </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <div class="dropdown-menu" aria-labelledby="combatStyleDropDown">
                       <a class="dropdown-item" href="#">Melee</a>
                       <a class="dropdown-item" href="#">Ranged</a>
                       <a class="dropdown-item" href="#">Magic</a>
@@ -49,16 +49,135 @@
                   </div>
                   <div class="col dropdown text-white text-center my-4">
                     <label for="gameMode">Game Mode</label>
-                    <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      set me
+                    <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="gameModeDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Normal
                     </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <div class="dropdown-menu" aria-labelledby="gameModeDropDown">
                       <a class="dropdown-item" href="#">Normal</a>
                       <a class="dropdown-item" href="#">Hardcore</a>
 
                     </div>
                   </div>
             </div>  
+
+            <table class="table table-striped table-dark table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col">DR% Needed</th>
+                  <th scope="col">Dungeon</th>
+                  <th scope="col">Toughest Foe</th>
+                  <th scope="col">Style</th>
+                  <th scope="col">Max Hit</th>
+                  <th scope="col">Reduced Max hit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td scope="row">24</th>
+                  <td>Chicken Dungeon</td>
+                  <td>Mumma Chicken</td>
+                  <td>Melee</td>
+                  <td>52</td>
+                  <td>52</td>
+                </tr>
+                <tr>
+                  <td scope="row">63</th>
+                  <td>Graveyard</td>
+                  <td>Zombie Leader</td>
+                  <td>Melee</td>
+                  <td>106</td>
+                  <td>106</td>
+                </tr>
+                <tr>
+                  <td scope="row">63</th>
+                  <td>Bandit Base</td>
+                  <td>Bandit Leader</td>
+                  <td>Ranged</td>
+                  <td>174</td>
+                  <td>174</td>
+                </tr>
+                <tr>
+                  <td scope="row">162</th>
+                  <td>Hall of Wizards</td>
+                  <td>Eldar Wizard</td>
+                  <td>Magic</td>
+                  <td>160</td>
+                  <td>160</td>
+                </tr>
+                <tr>
+                  <td scope="row">72</th>
+                  <td>Spider Forest</td>
+                  <td>Spider King</td>
+                  <td>Melee</td>
+                  <td>142</td>
+                  <td>142</td>
+                </tr>
+                <tr>
+                  <td scope="row">81</th>
+                  <td>Deep Sea Ship</td>
+                  <td>The Kraken</td>
+                  <td>Melee</td>
+                  <td>204</td>
+                  <td>204</td>
+                </tr>
+                <tr>
+                  <td scope="row">77</th>
+                  <td>Frozen Cove</td>
+                  <td>Protector of Ice</td>
+                  <td>Melee</td>
+                  <td>172</td>
+                  <td>172</td>
+                </tr>
+                <tr>
+                  <td scope="row">92</th>
+                  <td>Dragons Den</td>
+                  <td>Eldar Dragon</td>
+                  <td>Melee</td>
+                  <td>470</td>
+                  <td>470</td>
+                </tr>
+                <tr>
+                  <td scope="row">93</th>
+                  <td>Volcanic Cave</td>
+                  <td>Malcs</td>
+                  <td>Melee</td>
+                  <td>520</td>
+                  <td>520</td>
+                </tr>
+                <tr>
+                  <td scope="row">76</th>
+                  <td>Air Dungeon</td>
+                  <td>Voltaire</td>
+                  <td>Ranged</td>
+                  <td>713</td>
+                  <td>713</td>
+                </tr>
+                <tr>
+                  <td scope="row">194</th>
+                  <td>Water Dungeon</td>
+                  <td>Glacia</td>
+                  <td>Magic</td>
+                  <td>1080</td>
+                  <td>1080</td>
+                </tr>
+                <tr>
+                  <td scope="row">96</th>
+                  <td>Earth Dungeon</td>
+                  <td>Terran</td>
+                  <td>Melee</td>
+                  <td>950</td>
+                  <td>950</td>
+                </tr>
+                <tr>
+                  <td scope="row">194</th>
+                  <td>Fire Dungeon</td>
+                  <td>Ragnar</td>
+                  <td>Magic</td>
+                  <td>1300</td>
+                  <td>1300</td>
+                </tr>
+              </tbody>
+            </table>
 
         </div>
 
@@ -67,6 +186,7 @@
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <script src="constants.js"></script>
         <script src="app.js"></script>
     </body>
 </html> 
