@@ -1,9 +1,10 @@
 const dropdowns = document.querySelectorAll('.dropdown');
 const inputs = document.querySelectorAll('.input-field');
+window.onload = () => doTheThing();
 for (let i = 0; i < dropdowns.length; i++) {
     dropdowns[i].addEventListener('click', e => {
         if (e.target.classList.contains('dropdown-item')) {
-            e.preventDefault()
+            e.preventDefault();
             dropdowns[i].querySelector('button').innerText = e.target.innerText;
             doTheThing();
         }
@@ -31,6 +32,16 @@ function calcReducedMaxHit(combatTriangle, combatStyle) {
         });
     });
 }
+function calcHPneeded(combatTriangle, combatStyle, autoEatThreshold) {
+    let currDR = document.getElementById('currDR').value;
+    DUNGEONS.forEach(dungeon => {
+        dungeon.monsters.forEach(monster => {
+            let damageModifier = Math.floor(currDR * combatTriangle[combatStyle][monster.attackType]);
+            monster.reqHP = Math.max(100, Math.ceil((((monster.maxHit * (100 - damageModifier) / 100)) / autoEatThreshold) / 10) * 10);
+        });
+    });
+    //(monster.maxHit*(100-damageModifier)/100))/autoEatThreshold;
+}
 function updateTable() {
     // find highest dr monster in dungeon, return that monsters object, use to update table.
     const table = document.querySelectorAll('tbody tr');
@@ -52,10 +63,11 @@ function updateTable() {
     toughestFoeList.forEach((monster, i) => {
         let tablerow = table[i].querySelectorAll('td');
         tablerow[0].textContent = monster.minDR;
-        tablerow[2].textContent = monster.name;
-        tablerow[3].textContent = combatStyleSelect[monster.attackType];
-        tablerow[4].textContent = monster.maxHit;
-        tablerow[5].textContent = monster.reducedMaxHit;
+        tablerow[1].textContent = monster.reqHP;
+        tablerow[3].textContent = monster.name;
+        tablerow[4].textContent = combatStyleSelect[monster.attackType];
+        tablerow[5].textContent = monster.maxHit;
+        tablerow[6].textContent = monster.reducedMaxHit;
         // i want to change this so apply to entire row, not just each individual cell
         if (monster.minDR <= currDR) {
             tablerow.forEach(element => element.classList.add("idleable"));
@@ -106,6 +118,7 @@ function doTheThing() {
     }
     calcMinDR(autoEatThreshold, combatTriangle, combatStyle);
     calcReducedMaxHit(combatTriangle, combatStyle);
+    calcHPneeded(combatTriangle, combatStyle, autoEatThreshold);
     updateTable();
 }
 /*
