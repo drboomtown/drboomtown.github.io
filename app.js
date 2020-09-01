@@ -3,6 +3,7 @@ const inputs = document.querySelectorAll('.input-field');
 for (let i = 0; i < dropdowns.length; i++) {
     dropdowns[i].addEventListener('click', e => {
         if (e.target.classList.contains('dropdown-item')) {
+            e.preventDefault()
             dropdowns[i].querySelector('button').innerText = e.target.innerText;
             doTheThing();
         }
