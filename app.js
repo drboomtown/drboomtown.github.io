@@ -10,6 +10,7 @@ for (let i = 0; i < dropdowns.length; i++) {
 }
 for (let i = 0; i < inputs.length; i++) {
     inputs[i].addEventListener('input', doTheThing);
+    inputs[i].addEventListener('change', doTheThing);
 }
 ;
 function calcMinDR(autoEatThreshold, combatTriangle, combatStyle) {
@@ -114,7 +115,7 @@ Improve style
 X letter spacing, center collumn text (do i want this?)
 X colour striping with green overlay (working but i want to do it better)
 X stop shit moving about, fix width of columns
-If multiple monsters have 0 DR, show the one with the highest reduced max hit
+X If multiple monsters have 0 DR, show the one with the highest reduced max hit
 Save previous settings
 make code less shit
 tabs with other calcs?
