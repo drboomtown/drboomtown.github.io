@@ -10,7 +10,7 @@ for (let i = 0; i < dropdowns.length; i++) {
 }
 for (let i = 0; i < inputs.length; i++) {
     inputs[i].addEventListener('input', doTheThing);
-    inputs[i].addEventListener('change', doTheThing);
+    inputs[i].addEventListener('click', doTheThing);
 }
 ;
 function calcMinDR(autoEatThreshold, combatTriangle, combatStyle) {
