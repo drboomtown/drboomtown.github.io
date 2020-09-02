@@ -35,7 +35,7 @@ function urlInputs() {
     return urlParams.entries();
 }
 function share() {
-    let copyURL = `https://drboomtown.github.io/?hp=${document.getElementById('currHealth').value}&dr=${document.getElementById('currDR').value}&ae=${document.getElementById('autoEatDropDown').innerText}&style=${document.getElementById('combatStyleDropDown').innerText}&mode=${document.getElementById('gameModeDropDown').innerText}`;
+    let copyURL = `https://drboomtown.github.io/?hp=${document.getElementById('currHealth').value.trim()}&dr=${document.getElementById('currDR').value.trim()}&ae=${document.getElementById('autoEatDropDown').innerText.trim()}&style=${document.getElementById('combatStyleDropDown').innerText.trim()}&mode=${document.getElementById('gameModeDropDown').innerText.trim()}`;
     var dummy = document.createElement("input");
     document.body.appendChild(dummy);
     dummy.setAttribute("id", "dummy_id");
@@ -98,20 +98,18 @@ function updateTable() {
     let currDR = document.getElementById('currDR').value;
     DUNGEONS.forEach(dungeon => {
         let highestDR = Math.max(...dungeon.monsters.map(monster => monster.minDR));
+        let highestReqHP = Math.max(...dungeon.monsters.map(monster => monster.reqHP));
+        let highestHit = Math.max(...dungeon.monsters.map(monster => monster.reducedMaxHit));
         let toughestFoe;
-        if (highestDR === 0) {
-            let highestHit = Math.max(...dungeon.monsters.map(monster => monster.reducedMaxHit));
-            toughestFoe = dungeon.monsters.find(monster => monster.reducedMaxHit === highestHit);
-        }
-        else {
-            toughestFoe = dungeon.monsters.find(monster => monster.minDR === highestDR);
-        }
+        toughestFoe = dungeon.monsters.find(monster => monster.reducedMaxHit === highestHit);
+        toughestFoe.dungHighDr = highestDR;
+        toughestFoe.dungHighHit = highestReqHP;
         toughestFoeList.push(toughestFoe);
     });
     toughestFoeList.forEach((monster, i) => {
         let tablerow = table[i].querySelectorAll('td');
-        tablerow[0].textContent = monster.minDR;
-        tablerow[1].textContent = monster.reqHP;
+        tablerow[0].textContent = monster.dungHighDr;
+        tablerow[1].textContent = monster.dungHighHit;
         tablerow[3].textContent = monster.name;
         tablerow[4].textContent = combatStyleSelect[monster.attackType];
         tablerow[5].textContent = monster.maxHit;
@@ -170,13 +168,29 @@ function doTheThing() {
 TODO
 X make shit go colourfull if you have enough DR equipt
 X input arrows not submit form,
-Improve style
 X letter spacing, center collumn text (do i want this?)
 X colour striping with green overlay (working but i want to do it better)
 X stop shit moving about, fix width of columns
 X If multiple monsters have 0 DR, show the one with the highest reduced max hit
+X trim whitespace on URLgenerator
+
+change DR and HP needed columns to always show the highest in the dungeon, base toughest foe column off highest max hit monster
+see if i can improve minDR equation
+table of output info, autoeat threshold + DR%s after combat triangle for all styles
+Improve style
 Save previous settings
 make code less shit
 tabs with other calcs?
-*/ 
+*/
+// DUNGEONS.forEach(dungeon => {
+//     let highestDR = Math.max(...dungeon.monsters.map(monster => monster.minDR));
+//     let toughestFoe: object;
+//     if(highestDR === 0){
+//         let highestHit = Math.max(...dungeon.monsters.map(monster => monster.reducedMaxHit));
+//         toughestFoe = dungeon.monsters.find(monster => monster.reducedMaxHit === highestHit);
+//     } else {
+//         toughestFoe = dungeon.monsters.find(monster => monster.minDR === highestDR);
+//     }
+//     toughestFoeList.push(toughestFoe);
+//     });
 //# sourceMappingURL=app.js.map
