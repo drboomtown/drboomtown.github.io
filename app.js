@@ -1,6 +1,12 @@
 const dropdowns = document.querySelectorAll('.dropdown');
 const inputs = document.querySelectorAll('.input-field');
-window.onload = () => doTheThing();
+const shareBTN = document.getElementById('shareButton');
+window.onload = () => {
+    let entries = urlInputs();
+    updateurlInputs(entries);
+    doTheThing();
+};
+shareBTN.addEventListener('click', () => share());
 for (let i = 0; i < dropdowns.length; i++) {
     dropdowns[i].addEventListener('click', e => {
         if (e.target.classList.contains('dropdown-item')) {
@@ -14,7 +20,40 @@ for (let i = 0; i < inputs.length; i++) {
     inputs[i].addEventListener('input', doTheThing);
     // inputs[i].addEventListener('click', doTheThing);
 }
-;
+function urlInputs() {
+    // https://drboomtown.github.io/?hp=500&dr=65&ae=2&style=Ranged&mode=Hardcore
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.entries();
+}
+function share() {
+    let copyURL = `https://drboomtown.github.io/?hp=${document.getElementById('currHealth').value}&dr=${document.getElementById('currDR').value}&ae=${document.getElementById('autoEatDropDown').innerText}&style=${document.getElementById('combatStyleDropDown').innerText}&mode=${document.getElementById('gameModeDropDown').innerText}`;
+    var dummy = document.createElement("input");
+    document.body.appendChild(dummy);
+    dummy.setAttribute("id", "dummy_id");
+    document.getElementById("dummy_id").value = copyURL;
+    dummy.select();
+    document.execCommand("copy");
+    document.body.removeChild(dummy);
+}
+function updateurlInputs(entries) {
+    for (let entry of entries) {
+        if (entry[0] === 'hp' && +entry[1] >= 100 && +entry[1] <= 1030) {
+            document.getElementById('currHealth').value = entry[1];
+        }
+        if (entry[0] === 'dr' && +entry[1] >= 0 && +entry[1] <= 85) {
+            document.getElementById('currDR').value = entry[1];
+        }
+        if (entry[0] === 'ae' && +entry[1] >= 1 && +entry[1] <= 3) {
+            document.getElementById('autoEatDropDown').innerText = entry[1];
+        }
+        if (entry[0] === 'style' && entry[1] === "Melee" || entry[1] === "Ranged" || entry[1] === "Magic") {
+            document.getElementById('combatStyleDropDown').innerText = entry[1];
+        }
+        if (entry[0] === 'style' && entry[1] === "Normal" || entry[1] === "Hardcore") {
+            document.getElementById('gameModeDropDown').innerText = entry[1];
+        }
+    }
+}
 function calcMinDR(autoEatThreshold, combatTriangle, combatStyle) {
     let currHP = document.getElementById('currHealth').value;
     DUNGEONS.forEach(dungeon => {
@@ -79,43 +118,40 @@ function updateTable() {
     // 
     // tablerow[0].textContent = '99';
 }
-function doTheThing() {
-    let autoEatThreshold;
-    switch (document.getElementById('autoEatDropDown').innerText.trim()) {
+function getAutoEatThreshold(autoEatLevel) {
+    switch (autoEatLevel) {
         case "0":
-            autoEatThreshold = 0;
-            break;
+            return 0;
         case "1":
-            autoEatThreshold = 0.2;
-            break;
+            return 0.2;
         case "2":
-            autoEatThreshold = 0.3;
-            break;
+            return 0.3;
         case "3":
-            autoEatThreshold = 0.4;
-            break;
+            return 0.4;
     }
-    let combatStyle;
-    switch (document.getElementById('combatStyleDropDown').innerText.trim()) {
-        case "Melee":
-            combatStyle = 0;
-            break;
-        case "Ranged":
-            combatStyle = 1;
-            break;
-        case "Magic":
-            combatStyle = 2;
-            break;
-    }
-    let combatTriangle;
-    switch (document.getElementById('gameModeDropDown').innerText.trim()) {
+}
+function getCombatTriangle(gameMode) {
+    switch (gameMode) {
         case "Normal":
-            combatTriangle = [[1, 1.25, 0.5], [0.95, 1, 1.25], [1.25, 0.85, 1]];
-            break;
+            return [[1, 1.25, 0.5], [0.95, 1, 1.25], [1.25, 0.85, 1]];
         case "Hardcore":
-            combatTriangle = [[1, 1.25, 0.25], [0.75, 1, 1.25], [1.25, 0.75, 1]];
-            break;
+            return [[1, 1.25, 0.25], [0.75, 1, 1.25], [1.25, 0.75, 1]];
     }
+}
+function getCombatStyle(style) {
+    switch (style) {
+        case "Melee":
+            return 0;
+        case "Ranged":
+            return 1;
+        case "Magic":
+            return 2;
+    }
+}
+function doTheThing() {
+    let autoEatThreshold = getAutoEatThreshold(document.getElementById('autoEatDropDown').innerText.trim());
+    let combatStyle = getCombatStyle(document.getElementById('combatStyleDropDown').innerText.trim());
+    let combatTriangle = getCombatTriangle(document.getElementById('gameModeDropDown').innerText.trim());
     calcMinDR(autoEatThreshold, combatTriangle, combatStyle);
     calcReducedMaxHit(combatTriangle, combatStyle);
     calcHPneeded(combatTriangle, combatStyle, autoEatThreshold);
