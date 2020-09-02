@@ -7,6 +7,15 @@ window.onload = () => {
     doTheThing();
 };
 shareBTN.addEventListener('click', () => share());
+$(function () {
+    $('[data-toggle="popover"]').popover();
+    $('[data-toggle="tooltip"]').tooltip();
+});
+$('[data-toggle="popover"]').popover().click(function () {
+    setTimeout(function () {
+        $('[data-toggle="popover"]').popover('hide');
+    }, 2000);
+});
 for (let i = 0; i < dropdowns.length; i++) {
     dropdowns[i].addEventListener('click', e => {
         if (e.target.classList.contains('dropdown-item')) {
