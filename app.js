@@ -22,6 +22,12 @@ for (let i = 0; i < dropdowns.length; i++) {
             e.preventDefault();
             dropdowns[i].querySelector('button').innerText = e.target.innerText;
             doTheThing();
+            if (e.target.innerText === "Hardcore") {
+                dropdowns[i].querySelector('button').classList.add("btn-hardcore");
+            }
+            else if (e.target.innerText === "Normal" && dropdowns[i].querySelector('button').classList.contains("btn-hardcore")) {
+                dropdowns[i].querySelector('button').classList.remove("btn-hardcore");
+            }
         }
     });
 }
@@ -60,6 +66,9 @@ function updateurlInputs(entries) {
         }
         if (entry[0] === 'style' && entry[1] === "Normal" || entry[1] === "Hardcore") {
             document.getElementById('gameModeDropDown').innerText = entry[1];
+            if (entry[1] === "Hardcore") {
+                document.querySelector("#gameModeDropDown").classList.add("btn-hardcore");
+            }
         }
     }
 }
@@ -67,7 +76,8 @@ function calcMinDR(autoEatThreshold, combatTriangle, combatStyle) {
     let currHP = document.getElementById('currHealth').value;
     DUNGEONS.forEach(dungeon => {
         dungeon.monsters.forEach(monster => {
-            monster.minDR = Math.max(0, Math.ceil((Math.ceil((monster.maxHit - (currHP * autoEatThreshold)) / monster.maxHit * 100)) / combatTriangle[combatStyle][monster.attackType]));
+            // monster.minDR = Math.max(0, Math.ceil(Math.ceil((monster.maxHit - (currHP * autoEatThreshold)) / monster.maxHit * 100) / combatTriangle[combatStyle][monster.attackType]));
+            monster.minDR = Math.max(0, Math.ceil(Math.ceil(100 - currHP / monster.maxHit * (100 * autoEatThreshold)) / combatTriangle[combatStyle][monster.attackType]));
         });
     });
 }
@@ -76,7 +86,7 @@ function calcReducedMaxHit(combatTriangle, combatStyle) {
     DUNGEONS.forEach(dungeon => {
         dungeon.monsters.forEach(monster => {
             let damageModifier = Math.floor(currDR * combatTriangle[combatStyle][monster.attackType]);
-            monster.reducedMaxHit = Math.floor((100 - damageModifier) / 100 * monster.maxHit);
+            monster.reducedMaxHit = monster.maxHit - Math.floor(monster.maxHit * damageModifier / 100);
         });
     });
 }
@@ -85,10 +95,9 @@ function calcHPneeded(combatTriangle, combatStyle, autoEatThreshold) {
     DUNGEONS.forEach(dungeon => {
         dungeon.monsters.forEach(monster => {
             let damageModifier = Math.floor(currDR * combatTriangle[combatStyle][monster.attackType]);
-            monster.reqHP = Math.max(100, Math.ceil((((monster.maxHit * (100 - damageModifier) / 100)) / autoEatThreshold) / 10) * 10);
+            monster.reqHP = Math.max(100, Math.ceil((monster.maxHit - Math.floor(monster.maxHit * damageModifier / 100)) / autoEatThreshold / 10) * 10);
         });
     });
-    //(monster.maxHit*(100-damageModifier)/100))/autoEatThreshold;
 }
 function updateDungeonTable() {
     // find highest dr monster in dungeon, return that monsters object, use to update table.
@@ -185,8 +194,9 @@ X If multiple monsters have 0 DR, show the one with the highest reduced max hit
 X trim whitespace on URLgenerator
 X change DR and HP needed columns to always show the highest in the dungeon, base toughest foe column off highest max hit monster
 
+pop over tables of all dungeon monsters when you mouse over toughest foe or dungeon name
 see if i can improve minDR equation
-table of output info, autoeat threshold + DR%s after combat triangle for all styles
+ -- table of output info, autoeat threshold + DR%s after combat triangle for all styles (done but need to place it somewhere)
 Improve style
 Save previous settings
 make code less shit

@@ -52,3 +52,7 @@ u {
 .popover .arrow:after {
   border-top-color: #000000e0;
 }
+
+.btn-hardcore{
+  background-color: #7d0101;
+}
