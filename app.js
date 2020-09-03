@@ -90,9 +90,9 @@ function calcHPneeded(combatTriangle, combatStyle, autoEatThreshold) {
     });
     //(monster.maxHit*(100-damageModifier)/100))/autoEatThreshold;
 }
-function updateTable() {
+function updateDungeonTable() {
     // find highest dr monster in dungeon, return that monsters object, use to update table.
-    const table = document.querySelectorAll('tbody tr');
+    const table = document.querySelectorAll('.dungeon-table tbody tr');
     let toughestFoeList = [];
     let combatStyleSelect = ["Melee", "Ranged", "Magic"];
     let currDR = document.getElementById('currDR').value;
@@ -124,6 +124,15 @@ function updateTable() {
     });
     // 
     // tablerow[0].textContent = '99';
+}
+function updatePlayerTable(autoEatThreshold, combatTriangle, combatStyle) {
+    const table = document.querySelectorAll('.player-table tbody tr td');
+    let currDR = document.getElementById('currDR').value;
+    let currHP = document.getElementById('currHealth').value;
+    table[1].textContent = currHP * autoEatThreshold;
+    table[3].textContent = Math.ceil(currDR * combatTriangle[combatStyle][0]);
+    table[5].textContent = Math.ceil(currDR * combatTriangle[combatStyle][1]);
+    table[7].textContent = Math.ceil(currDR * combatTriangle[combatStyle][2]);
 }
 function getAutoEatThreshold(autoEatLevel) {
     switch (autoEatLevel) {
@@ -162,7 +171,8 @@ function doTheThing() {
     calcMinDR(autoEatThreshold, combatTriangle, combatStyle);
     calcReducedMaxHit(combatTriangle, combatStyle);
     calcHPneeded(combatTriangle, combatStyle, autoEatThreshold);
-    updateTable();
+    updateDungeonTable();
+    updatePlayerTable(autoEatThreshold, combatTriangle, combatStyle);
 }
 /*
 TODO
@@ -173,8 +183,8 @@ X colour striping with green overlay (working but i want to do it better)
 X stop shit moving about, fix width of columns
 X If multiple monsters have 0 DR, show the one with the highest reduced max hit
 X trim whitespace on URLgenerator
+X change DR and HP needed columns to always show the highest in the dungeon, base toughest foe column off highest max hit monster
 
-change DR and HP needed columns to always show the highest in the dungeon, base toughest foe column off highest max hit monster
 see if i can improve minDR equation
 table of output info, autoeat threshold + DR%s after combat triangle for all styles
 Improve style
