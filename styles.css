@@ -56,3 +56,10 @@ u {
 .btn-hardcore{
   background-color: #7d0101;
 }
+
+.label-w {
+  width: 100%;
+}
+@media screen and (max-width: 400px) {
+  .label-w { width:50px; }
+}
