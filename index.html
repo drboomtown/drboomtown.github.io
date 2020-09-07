@@ -13,18 +13,18 @@
     <body>
         
         <div class="container my-5 mx-auto">
-            <h1 class="text-white text-center my-4">Can I Idle This?</h1>
+            <h1 class="text-white text-center  my-4">Can I Idle This?</h1>
 
             <div class="row">
-                <form class="input-field col text-white text-center my-4" onsubmit="return false">
+                <form class="col-6 col-md input-field text-white text-center font-weight-bold my-4" onsubmit="return false">
                     <label for="TotalHealth">Total Health</label>
                     <input id="currHealth" type="number" name="TotalHealth" class="health-input form-control p-3" min="0" max="1030" value="100" step="10">
                 </form>
-                <form class="input-field col text-white text-center my-4" onsubmit="return false">
+                <form class="col-6 col-md input-field text-white text-center font-weight-bold my-4" onsubmit="return false">
                     <label for="TotalDR">Current DR%</label>
                     <input id="currDR" type="number" name="TotalDR" class=" form-control p-3" min="0" max="85" value="0">
                 </form>
-                <div class="col dropdown text-white text-center my-4">
+                <div class="col-4 col-md dropdown text-white text-center font-weight-bold my-4">
                     <label for="autoEatLevel">AutoEat Level</label>
                     <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="autoEatDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       1
@@ -35,7 +35,7 @@
                       <a class="dropdown-item" href="#">3</a>
                     </div>
                   </div>
-                  <div class="col dropdown text-white text-center my-4">
+                  <div class="col-4 col-md dropdown text-white text-center font-weight-bold my-4">
                     <label for="combatStyle">Combat Style</label>
                     <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="combatStyleDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Melee
@@ -46,7 +46,7 @@
                       <a class="dropdown-item" href="#">Magic</a>
                     </div>
                   </div>
-                  <div class="col dropdown text-white text-center my-4">
+                  <div class="col-4 col-md dropdown text-white text-center font-weight-bold my-4">
                     <label for="gameMode">Game Mode</label>
                     <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="gameModeDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Normal
@@ -59,7 +59,7 @@
                   </div>
             </div>  
 
-            <table class="dungeon-table table table-striped table-dark table-bordered table-hover">
+            <table class="dungeon-table table-responsive-md table-striped table-dark table-bordered table-hover">
               <thead>
                 <tr>
                   <th style="width: 11%" scope="col">
@@ -232,9 +232,10 @@
               </table>
 
               <div class="text-white text-center my-1 mx-auto">
-                <p>Current for Melvor Idle Version ALPHA V0.16.2.1</p>
+                <p>Current for Melvor Idle Version ALPHA V0.16.2.1.</p>
                 <p>DM Drboomtown#0982 on Discord for any complaints.</p>
                 <p>I am not liable for any deaths or lost items that may occur from trusting this page.</p>
+                <p>Thanks to Breindhal and Visua for all their help.</p>
               </div>
             </div>
 
