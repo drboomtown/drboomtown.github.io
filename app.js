@@ -3,6 +3,7 @@ const inputs = document.querySelectorAll('.input-field');
 const shareBTN = document.getElementById('shareButton');
 window.onload = () => {
     let entries = urlInputs();
+    tableCreate(DUNGEONS.length, document.querySelectorAll('.dungeon-table th').length, document.querySelector('.dungeon-table'));
     updateurlInputs(entries);
     doTheThing();
 };
@@ -30,6 +31,17 @@ for (let i = 0; i < dropdowns.length; i++) {
             }
         }
     });
+}
+function tableCreate(rows, collumns, tbl) {
+    let tbody = document.createElement('tbody');
+    for (var i = 0; i < rows; i++) {
+        var tr = tbody.insertRow();
+        for (var j = 0; j < collumns; j++) {
+            var td = tr.insertCell();
+            td.appendChild(document.createTextNode('Cell'));
+        }
+    }
+    tbl.appendChild(tbody);
 }
 for (let i = 0; i < inputs.length; i++) {
     inputs[i].addEventListener('input', doTheThing);
@@ -193,24 +205,14 @@ X stop shit moving about, fix width of columns
 X If multiple monsters have 0 DR, show the one with the highest reduced max hit
 X trim whitespace on URLgenerator
 X change DR and HP needed columns to always show the highest in the dungeon, base toughest foe column off highest max hit monster
+X see if i can improve minDR equation
+X Mobiles lay out - table header move while scroll?
+ -- table of output info, autoeat threshold + DR%s after combat triangle for all styles (done but need to place it somewhere)
 
 pop over tables of all dungeon monsters when you mouse over toughest foe or dungeon name
-see if i can improve minDR equation
- -- table of output info, autoeat threshold + DR%s after combat triangle for all styles (done but need to place it somewhere)
 Improve style
 Save previous settings
 make code less shit
 tabs with other calcs?
 */
-// DUNGEONS.forEach(dungeon => {
-//     let highestDR = Math.max(...dungeon.monsters.map(monster => monster.minDR));
-//     let toughestFoe: object;
-//     if(highestDR === 0){
-//         let highestHit = Math.max(...dungeon.monsters.map(monster => monster.reducedMaxHit));
-//         toughestFoe = dungeon.monsters.find(monster => monster.reducedMaxHit === highestHit);
-//     } else {
-//         toughestFoe = dungeon.monsters.find(monster => monster.minDR === highestDR);
-//     }
-//     toughestFoeList.push(toughestFoe);
-//     });
 //# sourceMappingURL=app.js.map

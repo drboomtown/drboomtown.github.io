@@ -25,7 +25,7 @@
                     <input id="currDR" type="number" name="TotalDR" class=" form-control p-3" min="0" max="85" value="0">
                 </form>
                 <div class="col-4 col-md dropdown text-white text-center font-weight-bold my-4">
-                    <label for="autoEatLevel">AutoEat Level</label>
+                    <label class="label-w" for="autoEatLevel">AutoEat Level</label>
                     <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="autoEatDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       1
                     </button>
@@ -36,7 +36,7 @@
                     </div>
                   </div>
                   <div class="col-4 col-md dropdown text-white text-center font-weight-bold my-4">
-                    <label for="combatStyle">Combat Style</label>
+                    <label class="label-w" for="combatStyle">Combat Style</label>
                     <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="combatStyleDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Melee
                     </button>
@@ -47,7 +47,7 @@
                     </div>
                   </div>
                   <div class="col-4 col-md dropdown text-white text-center font-weight-bold my-4">
-                    <label for="gameMode">Game Mode</label>
+                    <label class="label-w" for="gameMode">Game Mode</label>
                     <button class="btn btn-secondary dropdown-toggle form-control" type="button" id="gameModeDropDown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Normal
                     </button>
@@ -63,7 +63,7 @@
               <thead>
                 <tr>
                   <th style="width: 11%" scope="col">
-                    <div data-toggle="tooltip" data-placement="top" title="DR% you need equipt to safely idle this dungeon"><u>DR% Needed</u></div>
+                    <div data-toggle="tooltip" data-placement="top" title="Total DR% you need equipt to safely idle this dungeon with your currently set HP"><u>DR% Needed</u></div>
                   </th>
                   <th style="width: 11%" scope="col">
                     <div data-toggle="tooltip" data-placement="top" title="Total HP you need to safely idle this dungeon with your currently set DR%"><u>HP Needed</u></div>
@@ -75,128 +75,7 @@
                   <th style="width: 11%" scope="col">Reduced Max hit</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td scope="row">24</th>
-                  <td>0</td>
-                  <td>Chicken Dungeon</td>
-                  <td>Mumma Chicken</td>
-                  <td>Melee</td>
-                  <td>52</td>
-                  <td>52</td>
-                </tr>
-                <tr>
-                  <td scope="row">63</th>
-                  <td>0</td>
-                  <td>Graveyard</td>
-                  <td>Zombie Leader</td>
-                  <td>Melee</td>
-                  <td>106</td>
-                  <td>106</td>
-                </tr>
-                <tr>
-                  <td scope="row">63</th>
-                  <td>0</td>
-                  <td>Bandit Base</td>
-                  <td>Bandit Leader</td>
-                  <td>Ranged</td>
-                  <td>174</td>
-                  <td>174</td>
-                </tr>
-                <tr>
-                  <td scope="row">162</th>
-                  <td>0</td>
-                  <td>Hall of Wizards</td>
-                  <td>Eldar Wizard</td>
-                  <td>Magic</td>
-                  <td>160</td>
-                  <td>160</td>
-                </tr>
-                <tr>
-                  <td scope="row">72</th>
-                  <td>0</td>
-                  <td>Spider Forest</td>
-                  <td>Spider King</td>
-                  <td>Melee</td>
-                  <td>142</td>
-                  <td>142</td>
-                </tr>
-                <tr>
-                  <td scope="row">81</th>
-                  <td>0</td>
-                  <td>Deep Sea Ship</td>
-                  <td>The Kraken</td>
-                  <td>Melee</td>
-                  <td>204</td>
-                  <td>204</td>
-                </tr>
-                <tr>
-                  <td scope="row">77</th>
-                  <td>0</td>
-                  <td>Frozen Cove</td>
-                  <td>Protector of Ice</td>
-                  <td>Melee</td>
-                  <td>172</td>
-                  <td>172</td>
-                </tr>
-                <tr>
-                  <td scope="row">92</th>
-                  <td>0</td>
-                  <td>Dragons Den</td>
-                  <td>Eldar Dragon</td>
-                  <td>Melee</td>
-                  <td>470</td>
-                  <td>470</td>
-                </tr>
-                <tr>
-                  <td scope="row">93</th>
-                  <td>0</td>
-                  <td>Volcanic Cave</td>
-                  <td>Malcs</td>
-                  <td>Melee</td>
-                  <td>520</td>
-                  <td>520</td>
-                </tr>
-                <tr>
-                  <td scope="row">76</th>
-                  <td>0</td>
-                  <td>Air Dungeon</td>
-                  <td>Voltaire</td>
-                  <td>Ranged</td>
-                  <td>713</td>
-                  <td>713</td>
-                </tr>
-                <tr>
-                  <td scope="row">194</th>
-                  <td>0</td>
-                  <td>Water Dungeon</td>
-                  <td>Glacia</td>
-                  <td>Magic</td>
-                  <td>1080</td>
-                  <td>1080</td>
-                </tr>
-                <tr>
-                  <td scope="row">96</th>
-                  <td>0</td>
-                  <td>Earth Dungeon</td>
-                  <td>Terran</td>
-                  <td>Melee</td>
-                  <td>950</td>
-                  <td>950</td>
-                </tr>
-                <tr>
-                  <td scope="row">194</th>
-                  <td>0</td>
-                  <td>Fire Dungeon</td>
-                  <td>Ragnar</td>
-                  <td>Magic</td>
-                  <td>1300</td>
-                  <td>1300</td>
-                </tr>
-              </tbody>
             </table>
-
-
 
 
             <div class="text-white text-center">
