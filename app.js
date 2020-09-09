@@ -131,6 +131,7 @@ function updateDungeonTable() {
         let tablerow = table[i].querySelectorAll('td');
         tablerow[0].textContent = monster.dungHighDr;
         tablerow[1].textContent = monster.dungHighHit;
+        tablerow[2].textContent = DUNGEONS[i].name;
         tablerow[3].textContent = monster.name;
         tablerow[4].textContent = combatStyleSelect[monster.attackType];
         tablerow[5].textContent = monster.maxHit;
@@ -209,6 +210,8 @@ X see if i can improve minDR equation
 X Mobiles lay out - table header move while scroll?
  -- table of output info, autoeat threshold + DR%s after combat triangle for all styles (done but need to place it somewhere)
 
+
+Tabs
 pop over tables of all dungeon monsters when you mouse over toughest foe or dungeon name
 Improve style
 Save previous settings
