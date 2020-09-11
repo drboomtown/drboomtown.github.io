@@ -2,9 +2,14 @@ const dropdowns = document.querySelectorAll('.dropdown');
 const inputs = document.querySelectorAll('.input-field');
 const shareBTN = document.getElementById('shareButton');
 window.onload = () => {
-    let entries = urlInputs();
     tableCreate(DUNGEONS.length, document.querySelectorAll('.dungeon-table th').length, document.querySelector('.dungeon-table'));
-    updateurlInputs(entries);
+    if (window.location.search.length > 0) {
+        let entries = urlInputs();
+        updateurlInputs(entries);
+    }
+    else if (localStorage.length > 0) {
+        loadSave();
+    }
     doTheThing();
 };
 shareBTN.addEventListener('click', () => share());
@@ -82,6 +87,30 @@ function updateurlInputs(entries) {
                 document.querySelector("#gameModeDropDown").classList.add("btn-hardcore");
             }
         }
+    }
+}
+function localSave() {
+    localStorage.setItem('hp', document.getElementById('currHealth').value.trim());
+    localStorage.setItem('dr', document.getElementById('currDR').value.trim());
+    localStorage.setItem('autoEat', document.getElementById('autoEatDropDown').innerText.trim());
+    localStorage.setItem('combatStyle', document.getElementById('combatStyleDropDown').innerText.trim());
+    localStorage.setItem('gameMode', document.getElementById('gameModeDropDown').innerText.trim());
+}
+function loadSave() {
+    if (localStorage.hp) {
+        document.getElementById('currHealth').value = localStorage.hp;
+    }
+    if (localStorage.dr) {
+        document.getElementById('currDR').value = localStorage.dr;
+    }
+    if (localStorage.autoEat) {
+        document.getElementById('autoEatDropDown').innerText = localStorage.autoEat;
+    }
+    if (localStorage.combatStyle) {
+        document.getElementById('combatStyleDropDown').innerText = localStorage.combatStyle;
+    }
+    if (localStorage.gameMode) {
+        document.getElementById('gameModeDropDown').innerText = localStorage.gameMode;
     }
 }
 function calcMinDR(autoEatThreshold, combatTriangle, combatStyle) {
@@ -195,6 +224,7 @@ function doTheThing() {
     calcHPneeded(combatTriangle, combatStyle, autoEatThreshold);
     updateDungeonTable();
     updatePlayerTable(autoEatThreshold, combatTriangle, combatStyle);
+    localSave();
 }
 /*
 TODO
