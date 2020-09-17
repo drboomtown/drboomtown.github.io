@@ -1,27 +1,51 @@
 const dropdowns = document.querySelectorAll('.dropdown');
 const inputs = document.querySelectorAll('.input-field');
 const shareBTN = document.getElementById('shareButton');
+let answer = DUNGEONS.reduce((acc, element) => acc + element.monsters.length, 0);
+// initalise tables and load any data from local storage or URL variables
 window.onload = () => {
     tableCreate(DUNGEONS.length, document.querySelectorAll('.dungeon-table th').length, document.querySelector('.dungeon-table'));
+    let totalMonsters = DUNGEONS.reduce((acc, element) => acc + element.monsters.length, 0);
+    tableCreate(totalMonsters, document.querySelectorAll('.monster-table th').length, document.querySelector('.monster-table'));
     if (window.location.search.length > 0) {
         let entries = urlInputs();
-        updateurlInputs(entries);
+        updateURLInputs(entries);
     }
     else if (localStorage.length > 0) {
         loadSave();
     }
     doTheThing();
 };
+// initalise Tabs
+$(".nav-tabs a").click(function (e) {
+    $(this).tab('show');
+    $(".show").removeClass("show active");
+    if (e.target.id === "tab1") {
+        $("#nav-dungeonTable").addClass("show active");
+        $("#nav-inputs").addClass("show active");
+    }
+    if (e.target.id === "tab2") {
+        $("#nav-monsterTable").addClass("show active");
+        $("#nav-inputs").addClass("show active");
+    }
+    if (e.target.id === "tab3") {
+        $("#nav-tab3").addClass("show active");
+    }
+});
+//attach share function to share button
 shareBTN.addEventListener('click', () => share());
+//initalise pop overs and tooltips
 $(function () {
     $('[data-toggle="popover"]').popover();
     $('[data-toggle="tooltip"]').tooltip();
 });
+//add timer to popovers to fade after 2 seconds
 $('[data-toggle="popover"]').popover().click(function () {
     setTimeout(function () {
         $('[data-toggle="popover"]').popover('hide');
     }, 2000);
 });
+//initialise dropdown input buttons
 for (let i = 0; i < dropdowns.length; i++) {
     dropdowns[i].addEventListener('click', e => {
         if (e.target.classList.contains('dropdown-item')) {
@@ -37,6 +61,13 @@ for (let i = 0; i < dropdowns.length; i++) {
         }
     });
 }
+//initalise search bar
+$("#myInput").on("keyup", function () {
+    var value = $(this).val().toLowerCase();
+    $(".monster-table tbody tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+    });
+});
 function tableCreate(rows, collumns, tbl) {
     let tbody = document.createElement('tbody');
     for (var i = 0; i < rows; i++) {
@@ -67,7 +98,7 @@ function share() {
     document.execCommand("copy");
     document.body.removeChild(dummy);
 }
-function updateurlInputs(entries) {
+function updateURLInputs(entries) {
     for (let entry of entries) {
         if (entry[0] === 'hp' && +entry[1] >= 100 && +entry[1] <= 1030) {
             document.getElementById('currHealth').value = entry[1];
@@ -176,6 +207,32 @@ function updateDungeonTable() {
     // 
     // tablerow[0].textContent = '99';
 }
+function updateMonsterTable() {
+    let i = 0;
+    const table = document.querySelectorAll('.monster-table tbody tr');
+    let combatStyleSelect = ["Melee", "Ranged", "Magic"];
+    let currDR = document.getElementById('currDR').value;
+    DUNGEONS.forEach(dungeon => {
+        let dungeonName = dungeon.name;
+        dungeon.monsters.forEach(monster => {
+            let tablerow = table[i].querySelectorAll('td');
+            tablerow[0].textContent = monster.minDR;
+            tablerow[1].textContent = monster.reqHP;
+            tablerow[2].textContent = dungeonName;
+            tablerow[3].textContent = monster.name;
+            tablerow[4].textContent = combatStyleSelect[monster.attackType];
+            tablerow[5].textContent = monster.maxHit;
+            tablerow[6].textContent = monster.reducedMaxHit;
+            if (monster.minDR <= currDR) {
+                tablerow.forEach(element => element.classList.add("idleable"));
+            }
+            else if (monster.minDR > currDR && tablerow[0].classList.contains("idleable")) {
+                tablerow.forEach(element => element.classList.remove("idleable"));
+            }
+            i++;
+        });
+    });
+}
 function updatePlayerTable(autoEatThreshold, combatTriangle, combatStyle) {
     const table = document.querySelectorAll('.player-table tbody tr td');
     let currDR = document.getElementById('currDR').value;
@@ -223,6 +280,7 @@ function doTheThing() {
     calcReducedMaxHit(combatTriangle, combatStyle);
     calcHPneeded(combatTriangle, combatStyle, autoEatThreshold);
     updateDungeonTable();
+    updateMonsterTable();
     updatePlayerTable(autoEatThreshold, combatTriangle, combatStyle);
     localSave();
 }
