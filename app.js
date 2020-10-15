@@ -1,12 +1,10 @@
-const dropdowns = document.querySelectorAll('.dropdown');
-const inputs = document.querySelectorAll('.input-field');
-const shareBTN = document.getElementById('shareButton');
+const shareBTN = $('#shareButton');
 let answer = DUNGEONS.reduce((acc, element) => acc + element.monsters.length, 0);
 // initalise tables and load any data from local storage or URL variables
 window.onload = () => {
-    tableCreate(DUNGEONS.length, document.querySelectorAll('.dungeon-table th').length, document.querySelector('.dungeon-table'));
+    tableCreate(DUNGEONS.length, $('.dungeon-table th').length, document.querySelector('.dungeon-table'));
     let totalMonsters = DUNGEONS.reduce((acc, element) => acc + element.monsters.length, 0);
-    tableCreate(totalMonsters, document.querySelectorAll('.monster-table th').length, document.querySelector('.monster-table'));
+    tableCreate(totalMonsters, $('.monster-table th').length, document.querySelector('.monster-table'));
     if (window.location.search.length > 0) {
         let entries = urlInputs();
         updateURLInputs(entries);
@@ -16,6 +14,19 @@ window.onload = () => {
     }
     doTheThing();
 };
+// make input fields increment with mouse wheel
+$('input[type=number]').on('wheel', function (e) {
+    e.preventDefault();
+    let step = $(this).attr('step') ? +$(this).attr('step') : 1;
+    if (e.originalEvent.deltaY < 0) {
+        $(this).val(+$(this).val() + step);
+        doTheThing();
+    }
+    else {
+        $(this).val(+$(this).val() - step);
+        doTheThing();
+    }
+});
 // initalise Tabs
 $(".nav-tabs a").click(function (e) {
     $(this).tab('show');
@@ -33,7 +44,7 @@ $(".nav-tabs a").click(function (e) {
     }
 });
 //attach share function to share button
-shareBTN.addEventListener('click', () => share());
+$('#shareButton').click(() => share());
 //initalise pop overs and tooltips
 $(function () {
     $('[data-toggle="popover"]').popover();
@@ -46,21 +57,21 @@ $('[data-toggle="popover"]').popover().click(function () {
     }, 2000);
 });
 //initialise dropdown input buttons
-for (let i = 0; i < dropdowns.length; i++) {
-    dropdowns[i].addEventListener('click', e => {
-        if (e.target.classList.contains('dropdown-item')) {
-            e.preventDefault();
-            dropdowns[i].querySelector('button').innerText = e.target.innerText;
-            doTheThing();
-            if (e.target.innerText === "Hardcore") {
-                dropdowns[i].querySelector('button').classList.add("btn-hardcore");
-            }
-            else if (e.target.innerText === "Normal" && dropdowns[i].querySelector('button').classList.contains("btn-hardcore")) {
-                dropdowns[i].querySelector('button').classList.remove("btn-hardcore");
-            }
+$(function () {
+    $('.dropdown-item').click(function () {
+        let button = $(this).closest('.dropdown').find(".btn");
+        button.text($(this).text());
+        if ($(this).text() === "Hardcore") {
+            button.addClass('btn-hardcore');
         }
+        else if ($(this).text() === "Normal" && button.hasClass('btn-hardcore')) {
+            button.removeClass('btn-hardcore');
+        }
+        doTheThing();
     });
-}
+});
+//initalise input fields
+$('.input-field').change(doTheThing);
 //initalise search bar
 $("#myInput").on("keyup", function () {
     var value = $(this).val().toLowerCase();
@@ -79,17 +90,13 @@ function tableCreate(rows, collumns, tbl) {
     }
     tbl.appendChild(tbody);
 }
-for (let i = 0; i < inputs.length; i++) {
-    inputs[i].addEventListener('input', doTheThing);
-    // inputs[i].addEventListener('click', doTheThing);
-}
 function urlInputs() {
     // https://drboomtown.github.io/?hp=500&dr=65&ae=2&style=Ranged&mode=Hardcore
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.entries();
 }
 function share() {
-    let copyURL = `https://drboomtown.github.io/?hp=${document.getElementById('currHealth').value.trim()}&dr=${document.getElementById('currDR').value.trim()}&ae=${document.getElementById('autoEatDropDown').innerText.trim()}&style=${document.getElementById('combatStyleDropDown').innerText.trim()}&mode=${document.getElementById('gameModeDropDown').innerText.trim()}`;
+    let copyURL = `https://drboomtown.github.io/?hp=${$('#currHealth').val()}&dr=${$('#currDR').val()}&ae=${$('#autoEatDropDown').text()}&style=${$('#combatStyleDropDown').text()}&mode=${$('#gameModeDropDown').text()}`;
     var dummy = document.createElement("input");
     document.body.appendChild(dummy);
     dummy.setAttribute("id", "dummy_id");
@@ -121,11 +128,11 @@ function updateURLInputs(entries) {
     }
 }
 function localSave() {
-    localStorage.setItem('hp', document.getElementById('currHealth').value.trim());
-    localStorage.setItem('dr', document.getElementById('currDR').value.trim());
-    localStorage.setItem('autoEat', document.getElementById('autoEatDropDown').innerText.trim());
-    localStorage.setItem('combatStyle', document.getElementById('combatStyleDropDown').innerText.trim());
-    localStorage.setItem('gameMode', document.getElementById('gameModeDropDown').innerText.trim());
+    localStorage.setItem('hp', $('#currHealth').val());
+    localStorage.setItem('dr', $('#currDR').val());
+    localStorage.setItem('autoEat', $('#autoEatDropDown').text());
+    localStorage.setItem('combatStyle', $('#combatStyleDropDown').text());
+    localStorage.setItem('gameMode', $('#gameModeDropDown').text());
 }
 function loadSave() {
     if (localStorage.hp) {
@@ -142,147 +149,10 @@ function loadSave() {
     }
     if (localStorage.gameMode) {
         document.getElementById('gameModeDropDown').innerText = localStorage.gameMode;
-    }
-}
-function calcMinDR(autoEatThreshold, combatTriangle, combatStyle) {
-    let currHP = document.getElementById('currHealth').value;
-    DUNGEONS.forEach(dungeon => {
-        dungeon.monsters.forEach(monster => {
-            // monster.minDR = Math.max(0, Math.ceil(Math.ceil((monster.maxHit - (currHP * autoEatThreshold)) / monster.maxHit * 100) / combatTriangle[combatStyle][monster.attackType]));
-            monster.minDR = Math.max(0, Math.ceil(Math.ceil(100 - currHP / monster.maxHit * (100 * autoEatThreshold)) / combatTriangle[combatStyle][monster.attackType]));
-        });
-    });
-}
-function calcReducedMaxHit(combatTriangle, combatStyle) {
-    let currDR = document.getElementById('currDR').value;
-    DUNGEONS.forEach(dungeon => {
-        dungeon.monsters.forEach(monster => {
-            let damageModifier = Math.floor(currDR * combatTriangle[combatStyle][monster.attackType]);
-            monster.reducedMaxHit = monster.maxHit - Math.floor(monster.maxHit * damageModifier / 100);
-        });
-    });
-}
-function calcHPneeded(combatTriangle, combatStyle, autoEatThreshold) {
-    let currDR = document.getElementById('currDR').value;
-    DUNGEONS.forEach(dungeon => {
-        dungeon.monsters.forEach(monster => {
-            let damageModifier = Math.floor(currDR * combatTriangle[combatStyle][monster.attackType]);
-            monster.reqHP = Math.max(100, Math.ceil((monster.maxHit - Math.floor(monster.maxHit * damageModifier / 100)) / autoEatThreshold / 10) * 10);
-        });
-    });
-}
-function updateDungeonTable() {
-    // find highest dr monster in dungeon, return that monsters object, use to update table.
-    const table = document.querySelectorAll('.dungeon-table tbody tr');
-    let toughestFoeList = [];
-    let combatStyleSelect = ["Melee", "Ranged", "Magic"];
-    let currDR = document.getElementById('currDR').value;
-    DUNGEONS.forEach(dungeon => {
-        let highestDR = Math.max(...dungeon.monsters.map(monster => monster.minDR));
-        let highestReqHP = Math.max(...dungeon.monsters.map(monster => monster.reqHP));
-        let highestHit = Math.max(...dungeon.monsters.map(monster => monster.reducedMaxHit));
-        let toughestFoe;
-        toughestFoe = dungeon.monsters.find(monster => monster.reducedMaxHit === highestHit);
-        toughestFoe.dungHighDr = highestDR;
-        toughestFoe.dungHighHit = highestReqHP;
-        toughestFoeList.push(toughestFoe);
-    });
-    toughestFoeList.forEach((monster, i) => {
-        let tablerow = table[i].querySelectorAll('td');
-        tablerow[0].textContent = monster.dungHighDr;
-        tablerow[1].textContent = monster.dungHighHit;
-        tablerow[2].textContent = DUNGEONS[i].name;
-        tablerow[3].textContent = monster.name;
-        tablerow[4].textContent = combatStyleSelect[monster.attackType];
-        tablerow[5].textContent = monster.maxHit;
-        tablerow[6].textContent = monster.reducedMaxHit;
-        // i want to change this so apply to entire row, not just each individual cell
-        if (monster.minDR <= currDR) {
-            tablerow.forEach(element => element.classList.add("idleable"));
+        if (localStorage.gameMode === "Hardcore") {
+            document.querySelector("#gameModeDropDown").classList.add("btn-hardcore");
         }
-        else if (monster.minDR > currDR && tablerow[0].classList.contains("idleable")) {
-            tablerow.forEach(element => element.classList.remove("idleable"));
-        }
-    });
-    // 
-    // tablerow[0].textContent = '99';
-}
-function updateMonsterTable() {
-    let i = 0;
-    const table = document.querySelectorAll('.monster-table tbody tr');
-    let combatStyleSelect = ["Melee", "Ranged", "Magic"];
-    let currDR = document.getElementById('currDR').value;
-    DUNGEONS.forEach(dungeon => {
-        let dungeonName = dungeon.name;
-        dungeon.monsters.forEach(monster => {
-            let tablerow = table[i].querySelectorAll('td');
-            tablerow[0].textContent = monster.minDR;
-            tablerow[1].textContent = monster.reqHP;
-            tablerow[2].textContent = dungeonName;
-            tablerow[3].textContent = monster.name;
-            tablerow[4].textContent = combatStyleSelect[monster.attackType];
-            tablerow[5].textContent = monster.maxHit;
-            tablerow[6].textContent = monster.reducedMaxHit;
-            if (monster.minDR <= currDR) {
-                tablerow.forEach(element => element.classList.add("idleable"));
-            }
-            else if (monster.minDR > currDR && tablerow[0].classList.contains("idleable")) {
-                tablerow.forEach(element => element.classList.remove("idleable"));
-            }
-            i++;
-        });
-    });
-}
-function updatePlayerTable(autoEatThreshold, combatTriangle, combatStyle) {
-    const table = document.querySelectorAll('.player-table tbody tr td');
-    let currDR = document.getElementById('currDR').value;
-    let currHP = document.getElementById('currHealth').value;
-    table[1].textContent = currHP * autoEatThreshold;
-    table[3].textContent = Math.ceil(currDR * combatTriangle[combatStyle][0]);
-    table[5].textContent = Math.ceil(currDR * combatTriangle[combatStyle][1]);
-    table[7].textContent = Math.ceil(currDR * combatTriangle[combatStyle][2]);
-}
-function getAutoEatThreshold(autoEatLevel) {
-    switch (autoEatLevel) {
-        case "0":
-            return 0;
-        case "1":
-            return 0.2;
-        case "2":
-            return 0.3;
-        case "3":
-            return 0.4;
     }
-}
-function getCombatTriangle(gameMode) {
-    switch (gameMode) {
-        case "Normal":
-            return [[1, 1.25, 0.5], [0.95, 1, 1.25], [1.25, 0.85, 1]];
-        case "Hardcore":
-            return [[1, 1.25, 0.25], [0.75, 1, 1.25], [1.25, 0.75, 1]];
-    }
-}
-function getCombatStyle(style) {
-    switch (style) {
-        case "Melee":
-            return 0;
-        case "Ranged":
-            return 1;
-        case "Magic":
-            return 2;
-    }
-}
-function doTheThing() {
-    let autoEatThreshold = getAutoEatThreshold(document.getElementById('autoEatDropDown').innerText.trim());
-    let combatStyle = getCombatStyle(document.getElementById('combatStyleDropDown').innerText.trim());
-    let combatTriangle = getCombatTriangle(document.getElementById('gameModeDropDown').innerText.trim());
-    calcMinDR(autoEatThreshold, combatTriangle, combatStyle);
-    calcReducedMaxHit(combatTriangle, combatStyle);
-    calcHPneeded(combatTriangle, combatStyle, autoEatThreshold);
-    updateDungeonTable();
-    updateMonsterTable();
-    updatePlayerTable(autoEatThreshold, combatTriangle, combatStyle);
-    localSave();
 }
 /*
 TODO
@@ -297,12 +167,11 @@ X change DR and HP needed columns to always show the highest in the dungeon, bas
 X see if i can improve minDR equation
 X Mobiles lay out - table header move while scroll?
  -- table of output info, autoeat threshold + DR%s after combat triangle for all styles (done but need to place it somewhere)
+X Save previous settings
+X Tabs
 
 
-Tabs
-pop over tables of all dungeon monsters when you mouse over toughest foe or dungeon name
 Improve style
-Save previous settings
 make code less shit
 tabs with other calcs?
 */
