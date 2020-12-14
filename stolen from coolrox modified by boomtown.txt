@@ -1,0 +1,370 @@
+/**
+ * [playerType][enemyType]
+ * 0:Melee 1:Ranged 2:Magic
+ */
+const combatTriangle = {
+  normal: {
+    damageModifier: [
+      [1, 1.1, 0.9],
+      [0.9, 1, 1.1],
+      [1.1, 0.9, 1],
+    ],
+    reductionModifier: [
+      [1, 1.25, 0.5],
+      [0.95, 1, 1.25],
+      [1.25, 0.85, 1],
+    ],
+  },
+  hardcore: {
+    damageModifier: [
+      [1, 1.1, 0.8],
+      [0.8, 1, 1.1],
+      [1.1, 0.8, 1],
+    ],
+    reductionModifier: [
+      [1, 1.25, 0.25],
+      [0.75, 1, 1.25],
+      [1.25, 0.75, 1],
+    ],
+  },
+};
+
+/**
+ * Finds the required damage reduction for a given dungeon
+ * @param {number} maxHitpoints
+ * @param {number} playerAttackType Player attack style, use CONSTANTS.attackType.
+ * @param {number} dungeonID Dungeon id, Index of DUNGEONS
+ * @param {number} eatTier INdex of autoEatdata, 1 less of displayed tier, e.g. tier 1 is 0
+ * @param {string} gameMode Gamemode, 'normal' or 'hardcore'
+ * @returns
+ * computeRequiredDamageResist(990, CONSTANTS.attackType.Melee, CONSTANTS.dungeon.Air_God_dungeon, 2, 'normal')
+ */
+function computeRequiredDamageResist(maxHitpoints, playerAttackType, dungeonID, eatTier, gameMode) {
+  let minDamageReduction = 0;
+  let worstEnemy = -1;
+  let worstMaxHit = -1;
+  DUNGEONS[dungeonID].monsters.forEach((monsterID)=>{
+    const maxHit = getMonsterTrueMaxHit(monsterID);
+    const modifiedDamageReduction = Math.ceil(100 - maxHitpoints / maxHit * autoEatData[eatTier].eatAt);
+    const damageReduction = Math.ceil(modifiedDamageReduction / combatTriangle[gameMode].reductionModifier[playerAttackType][MONSTERS[monsterID].attackType]);
+    minDamageReduction = Math.max(minDamageReduction, damageReduction)
+    if (minDamageReduction === damageReduction) {
+      worstEnemy = monsterID;
+      worstMaxHit = maxHit;
+    }
+  })
+  console.log(`Worst Enemy is ${MONSTERS[worstEnemy].name}, with max hit of: ${worstMaxHit}. Type: ${MONSTERS[worstEnemy].attackType}`)
+  return minDamageReduction;
+}
+
+ /*
+ * createIdleTable(900,990,30,40,CONSTANTS.attackType.Melee,CONSTANTS.dungeon.Air_God_dungeon,'normal')
+ */
+function createIdleTable(minHP,maxHP,minDR,maxDR,playerAttackType,dungeonID,gameMode) {
+  const tableCells = [];
+  let tableRow = [''];
+  for (let i = minHP; i < (maxHP+10);i+=10) {
+    tableRow.push(`${i}`);
+  }
+  tableCells.push(tableRow);
+  for (let j = minDR;j<(maxDR+1);j++) {
+    tableRow = [`${j}%`];
+    for (let i = minHP; i < (maxHP+10);i+=10) {
+      autoEatTier = checkIfCanIdle(i, j, playerAttackType, dungeonID, gameMode);
+      if (autoEatTier === 4) {
+        tableRow.push('No');
+      } else {
+        tableRow.push(`T${autoEatTier}`);
+      }
+    }
+    tableCells.push(tableRow);
+  }
+  createExportBox(tableCells.map((row)=>{return row.join('\t')}).join('\n'));
+}
+
+
+/**
+ * Checks if you can idle a dungeon
+ * @param {number} maxHitpoints
+ * @param {number} damageReduction
+ * @param {number} playerAttackType
+ * @param {number} dungeonID
+ * @param {string} gameMode
+ * @return {number} autoEatTier
+ */
+function checkIfCanIdle(maxHitpoints, damageReduction, playerAttackType, dungeonID, gameMode) {
+  let requiredTier = 4;
+  let maxMaxHit = 0;
+  DUNGEONS[dungeonID].monsters.forEach((monsterID)=>{
+    const maxHit = getMonsterTrueMaxHit(monsterID);
+    const modifiedDamageReduction = Math.floor(damageReduction*combatTriangle[gameMode].reductionModifier[playerAttackType][MONSTERS[monsterID].attackType]);
+    const reducedMaxHit = maxHit - Math.floor(maxHit*modifiedDamageReduction/100);
+    maxMaxHit = Math.max(maxMaxHit, reducedMaxHit);
+  });
+  for (let i = 0;i<autoEatData.length;i++) {
+    if(maxHitpoints*autoEatData[i].eatAt/100 >= maxMaxHit) {
+      requiredTier = i+1;
+      break;
+    }
+  }
+  return requiredTier;
+}
+
+/**
+ * @description Computes the max hit of a monster
+ * @param {number} monsterID
+ * @return {number}
+ */
+function getMonsterMaxHit(monsterID) {
+  let maximumStrengthRoll;
+  if (MONSTERS[monsterID].attackType === CONSTANTS.attackType.Melee) {
+    const effectiveStrengthLevel = Math.floor(MONSTERS[monsterID].strengthLevel + 8 + 1);
+    maximumStrengthRoll = Math.floor(numberMultiplier * (1.3 + (effectiveStrengthLevel / 10) + (MONSTERS[monsterID].strengthBonus / 80) + (effectiveStrengthLevel * MONSTERS[monsterID].strengthBonus / 640)));
+  } else if (MONSTERS[monsterID].attackType === CONSTANTS.attackType.Ranged) {
+    const effectiveStrengthLevel = Math.floor(MONSTERS[monsterID].rangedLevel + 8 + 1);
+    maximumStrengthRoll = Math.floor(numberMultiplier * (1.3 + (effectiveStrengthLevel / 10) + (MONSTERS[monsterID].strengthBonusRanged / 80) + (effectiveStrengthLevel * MONSTERS[monsterID].strengthBonusRanged / 640)));
+  } else if (MONSTERS[monsterID].attackType === CONSTANTS.attackType.Magic) {
+    if (MONSTERS[monsterID].selectedSpell === null || MONSTERS[monsterID].selectedSpell === undefined) maximumStrengthRoll = Math.floor(numberMultiplier * (MONSTERS[monsterID].setMaxHit + MONSTERS[monsterID].setMaxHit * (MONSTERS[monsterID].damageBonusMagic / 100)));
+    else maximumStrengthRoll = Math.floor(numberMultiplier * (SPELLS[MONSTERS[monsterID].selectedSpell].maxHit + SPELLS[MONSTERS[monsterID].selectedSpell].maxHit * (MONSTERS[monsterID].damageBonusMagic / 100)));
+  }
+  return maximumStrengthRoll;
+}
+
+/**
+ * Gets the True max hit of a monster
+ * @param {number} monsterID
+ * @return {number}
+ */
+function getMonsterTrueMaxHit(monsterID) {
+  let maxHit = 0;
+  let normalChance = 100;
+  const normalMaxHit = getMonsterMaxHit(monsterID);
+  if (MONSTERS[monsterID].hasSpecialAttack) {
+    let specialMax;
+    for (let i = 0; i < MONSTERS[monsterID].specialAttackID.length; i++) {
+      const specialAttack = enemySpecialAttacks[MONSTERS[monsterID].specialAttackID[i]];
+      if (MONSTERS[monsterID].overrideSpecialChances !== undefined) {
+        normalChance -= MONSTERS[monsterID].overrideSpecialChances[i];
+      } else {
+        normalChance -= specialAttack.chance;
+      }
+      if (specialAttack.setDamage !== null) {
+        specialMax = specialAttack.setDamage * numberMultiplier;
+      } else {
+        specialMax = normalMaxHit;
+      }
+      specialMax *= specialAttack.stunDamageMultiplier;
+      if (specialMax > maxHit) maxHit = specialMax;
+    }
+  }
+  if (normalChance > 0 && (normalMaxHit > maxHit)) maxHit = normalMaxHit;
+  // Special Attack Max Hit
+  return maxHit;
+}
+
+function createExportBox(textContent) {
+  let exportBox = document.createElement('textarea');
+  exportBox.style.width = '75%';
+  exportBox.style.height = '75%';
+  exportBox.style.zIndex = 10000;
+  exportBox.style.position = 'absolute';
+  exportBox.style.left = '12.5%';
+  exportBox.style.bottom = '12.5%';
+  exportBox.textContent = textContent;
+  exportBox.addEventListener('dblclick', exportBox.remove)
+  document.body.appendChild(exportBox);
+}
+
+// Coolrox made everything abouv this line
+// Boomtown wrote everything below this line
+
+
+/**
+ * Outputs a table of all monsters in a given dungeons basic stats
+ * @param {number} dungeonID
+ */
+// getDungeonMonsterStats(11)
+function getDungeonMonsterStats(dungeonID) {
+  const tableCells = [];
+  let tableRow = [''];
+  let header = ["Hitpoints", "MaxHit", "Attack Type"];
+
+  tableRow.push(`${ DUNGEONS[dungeonID].name}`);
+  tableCells.push(tableRow);
+  tableRow = [''];
+
+  header.forEach((headerItem)=>{
+    tableRow.push(`${headerItem}`);
+  });
+  tableCells.push(tableRow);
+
+  DUNGEONS[dungeonID].monsters.forEach((monsterID)=>{
+    let monsterAtkType;
+    switch(MONSTERS[monsterID].attackType){
+    case 0:
+      monsterAtkType = "Melee";
+      break;
+
+    case 1:
+      monsterAtkType = "Ranged";
+      break;
+
+    case 2:
+      monsterAtkType = "Magic";
+      break;
+    }
+
+    tableRow = [`${MONSTERS[monsterID].name}`];
+    tableRow.push(`${MONSTERS[monsterID].hitpoints}`);
+    tableRow.push(`${getMonsterTrueMaxHit(monsterID)}`);
+    tableRow.push(`${monsterAtkType}`);
+    tableCells.push(tableRow);
+
+  });
+  // createExportBox(tableCells.map((row)=>{return row.join('\t')}).join('\n'));
+}
+
+function getAllDungeonMonsterStats() {
+  let dungeonList = DUNGEONS.length;
+    const tableCells = [];
+    let tableRow = [''];
+  let header = ["Hitpoints", "MaxHit", "Attack Type"];
+
+  for(i=0; i < dungeonList; i++){
+
+
+    tableRow.push(`${ DUNGEONS[i].name}`);
+    tableCells.push(tableRow);
+    tableRow = [''];
+
+    header.forEach((headerItem)=>{
+      tableRow.push(`${headerItem}`);
+    });
+    tableCells.push(tableRow);
+
+    DUNGEONS[i].monsters.forEach((monsterID)=>{
+      let monsterAtkType;
+      switch(MONSTERS[monsterID].attackType){
+      case 0:
+        monsterAtkType = "Melee";
+        break;
+
+      case 1:
+        monsterAtkType = "Ranged";
+        break;
+
+      case 2:
+        monsterAtkType = "Magic";
+        break;
+      }
+
+      tableRow = [`${MONSTERS[monsterID].name}`];
+      tableRow.push(`${MONSTERS[monsterID].hitpoints}`);
+      tableRow.push(`${getMonsterTrueMaxHit(monsterID)}`);
+      tableRow.push(`${monsterAtkType}`);
+      tableCells.push(tableRow);
+      tableRow = [''];
+
+    });
+  }
+  createExportBox(tableCells.map((row)=>{return row.join('\t')}).join('\n'));
+}
+
+function extractDungeonInfo(){
+  let dungeonsInfo = [];
+  for( let i = 0; i < DUNGEONS.length; i++){
+    let dungeonInfo = {name: DUNGEONS[i].name, monsters: Array.from(new Set(DUNGEONS[i].monsters))}
+    dungeonsInfo.push(dungeonInfo);
+  }
+  createExportBox(JSON.stringify(dungeonsInfo, null, 4));
+}
+
+function extractMonsterInfo(){
+  let monstersInfo = [];
+  for( let i = 0; i < MONSTERS.length; i++){
+    let monsterInfo = {id: MONSTERS[i].id, name: MONSTERS[i].name, attackType: MONSTERS[i].attackType, maxHit: getMonsterTrueMaxHit(MONSTERS[i].id)}
+    monstersInfo.push(monsterInfo);
+  }
+  createExportBox(JSON.stringify(monstersInfo, null, 4));
+}
+
+function extractDungeonInfoNew(){
+  let dungeonsInfo = [];
+  for( let i = 0; i < DUNGEONS.length; i++){
+    let dungeonInfo = {name: DUNGEONS[i].name, monsters: []}
+    let monsterlist = Array.from(new Set(DUNGEONS[i].monsters))
+
+    monsterlist.forEach(monsterID => {
+      let monsterInfo = {
+        name: MONSTERS[monsterID].name,
+        attackType: MONSTERS[monsterID].attackType,
+        maxHit: getMonsterTrueMaxHit(MONSTERS[monsterID].id),
+        reducedMaxHit: null,
+        minDR: null,
+      }
+
+
+      dungeonInfo.monsters.push(monsterInfo);
+    })
+    dungeonsInfo.push(dungeonInfo);
+  }
+  createExportBox(JSON.stringify(dungeonsInfo, null, 4));
+}
+
+/*
+function getDungeonMonsterStats(dungeonID) {
+  const tableCells = [];
+  let tableRow = [''];
+  var header = ["Hitpoints", "MaxHit", "Attack Type"];
+
+  for (let i = 0; i < header.length; i+=1){
+    tableRow.push(`${header[i]}`);
+  };
+  tableCells.push(tableRow);
+
+  DUNGEONS[dungeonID].monsters.forEach((monsterID)=>{
+    const monsterName = MONSTERS[monsterID].name;
+    const monsterHitpoints = MONSTERS[monsterID].hitpoints;
+    let monsterAtkType = MONSTERS[monsterID].attackType
+    const monsterMaxHit = getMonsterTrueMaxHit(monsterID)
+
+    if(monsterAtkType === 0){
+      monsterAtkType = "Melee";
+    }
+    if(monsterAtkType === 1){
+      monsterAtkType = "Ranged";
+    }
+    if(monsterAtkType === 2){
+      monsterAtkType = "Magic";
+    }
+
+    tableRow = [`${monsterName}`];
+    tableRow.push(`${monsterHitpoints}`);
+    tableRow.push(`${monsterMaxHit}`);
+    tableRow.push(`${monsterAtkType}`);
+    tableCells.push(tableRow);
+
+  });
+  createExportBox(tableCells.map((row)=>{return row.join('\t')}).join('\n'));
+}
+*/
+
+function slayerTaskFinder(monsterID){
+let task = setInterval(() => {
+  if(slayerTask[0].monsterID != monsterID){
+    newSlayerTask();
+  }else{
+    clearInterval(task);
+  }
+  },3000);
+}
+
+let testing = True
+
+while(testing){
+  let result = Math.floor(Math.random()*combatData.enemy.maximumStrengthRoll+1)
+  if(result >= 146){
+    console.log(result);
+    break;
+  }
+}
